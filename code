@@ -1,0 +1,323 @@
+//First come first serve 
+
+#include<bits/stdc++.h> 
+
+using namespace std; 
+
+int main() 
+
+{ 
+
+    int np; 
+
+    cout<<"Enter process: "; 
+
+    cin>>np; 
+
+    int p[np+5],br[np+5]; 
+
+    cout<<"Enter the br_t for process:"<<endl; 
+
+    for(int i=0;i<np;i++) { 
+
+        cout<<"p"<<i+1<<":"; 
+
+        cin>>br[i]; 
+
+        p[i]=i+1; 
+
+    } 
+
+    int wt[np+5],tr[np+5]; 
+
+    tr[0]=br[0]; 
+
+    for(int i=0;i<np;i++) 
+
+    { 
+
+        if(i!=0) 
+
+        { 
+
+            if(br[i]>tr[i-1]) 
+
+                tr[i]=tr[i-1]+br[i]+(br[i]-tr[i-1]); 
+
+            else tr[i]=tr[i-1]+br[i]; 
+
+        } 
+
+        wt[i]=tr[i]-br[i]; 
+
+    } 
+
+    cout<<"P"<<"\tBrust"<<"\tWait"<<"\tTurnaround"<<endl; 
+
+    for(int i=0;i<np;i++) 
+
+    { 
+
+        cout<<p[i]<<"\t"<<br[i]<<"\t"<<wt[i]<<"\t"<<tr[i]<<endl; 
+
+    } 
+
+    return 0; 
+
+}
+
+//shortest job first 
+
+TAT = CT-AT 
+
+WT = TAT-BT 
+
+#include<bits/stdc++.h> 
+
+using namespace std; 
+
+int main() { 
+
+    int np; 
+
+    cin>>np; 
+
+    vector<pair<int,int>>store; 
+
+    for(int i=0;i<np;i++) { 
+
+        int aT,bT; 
+
+        cin>>aT>>bT; 
+
+        store.push_back({aT, bT}); 
+
+    } 
+
+    sort(store.begin(), store.end()); 
+
+    int i=0; 
+
+    int cT[np]={0},tat[np]={0},wt[np]={0}; 
+
+    for(auto p : store) { 
+
+        if(i==0)cT[i]=p.first+p.second; 
+
+        else cT[i]=cT[i-1]+p.second; 
+
+        tat[i]=cT[i]-p.first; 
+
+        wt[i]=tat[i]-p.second; 
+
+        i++; 
+
+    } 
+
+    cout<<"ct"<<"\ttat"<<"\twt"<<endl; 
+
+    for(int i=0;i<np;i++) 
+
+    { 
+
+        cout<<cT[i]<<"\t"<<tat[i]<<"\t"<<wt[i]<<endl; 
+
+    } 
+
+    return 0; 
+
+}
+
+//Priority 
+
+#include<bits/stdc++.h> using namespace std; 
+
+struct Process{ 
+
+int id,bt,pr,wt,tat; 
+
+}; 
+
+bool compare(Process a, Process b){ 
+
+return a.pr < b.pr; 
+
+} 
+
+int main() { 
+
+    int n; 
+
+    cout << "Enter the number of processes: "; 
+
+    cin >> n; 
+
+    Process p[n]; 
+
+    cout << "Enter the burst time and priority for each process:\n"; 
+
+    for (int i = 0; i < n; i++) { 
+
+        p[i].id = i + 1; 
+
+        cout << "Process " << i + 1 << " Burst Time: "; 
+
+        cin >> p[i].bt; 
+
+        cout << "Process " << i + 1 << " Priority: "; 
+
+        cin >> p[i].pr; 
+
+    } 
+
+     sort(p, p + n, compare); 
+
+     p[0].wt = 0; 
+
+     p[0].tat = p[0].bt; 
+
+     for (int i = 1; i < n; i++) { 
+
+         p[i].wt = p[i - 1].wt + p[i - 1].bt; 
+
+         p[i].tat = p[i].wt + p[i].bt; 
+
+        } 
+
+    cout << "\nProcess\tBurst Time\tPriority\tWaiting Time\tTurnaround Time\n"; 
+
+    int total_wt = 0, total_tat = 0; 
+
+    for (int i = 0; i < n; i++) { 
+
+         total_wt += p[i].wt; 
+
+         total_tat += p[i].tat; 
+
+         cout << "P" << p[i].id << "\t\t" << p[i].bt << "\t\t" 
+
+         << p[i].pr << "\t\t" << p[i].wt << "\t\t" << p[i].tat << endl; 
+
+    } 
+
+     cout << "\nAverage Waiting Time: " << (float)total_wt / n << endl; 
+
+     cout << "Average Turnaround Time: " << (float)total_tat / n << endl; 
+
+return 0; 
+
+} 
+
+// Round Robin 
+
+#include <iostream> 
+
+#include <queue> 
+
+#include <iomanip> 
+
+using namespace std; 
+
+struct Process {int id,bt,remaining;}; 
+
+void roundRobin(Process p[], int n, int quantum) { 
+
+queue<int> q; 
+
+int time = 0; 
+
+int total_wt = 0, total_tat = 0; 
+
+for (int i = 0; i < n; i++) { 
+
+p[i].remaining = p[i].bt; 
+
+} 
+
+cout << "\nProcess\tBurst Time\tWaiting Time\tTurnaround Time\n"; 
+
+while (true) { 
+
+bool allDone = true; 
+
+for (int i = 0; i < n; i++) { 
+
+if (p[i].remaining > 0) { 
+
+allDone = false; 
+
+if (p[i].remaining > quantum) { 
+
+time += quantum; 
+
+p[i].remaining -= quantum; 
+
+} else { 
+
+time += p[i].remaining; 
+
+p[i].remaining = 0; 
+
+} 
+
+q.push(i); 
+
+int wt = time - p[i].bt; 
+
+int tat = time; 
+
+cout << "P" << p[i].id << "\t\t" << p[i].bt << "\t\t" 
+
+<< wt << "\t\t" << tat << endl; 
+
+total_wt += wt; 
+
+total_tat += tat; 
+
+} 
+
+} 
+
+if (allDone) break; 
+
+} 
+
+cout << "\nAverage Waiting Time: " << (float)total_wt / n << endl; 
+
+cout << "Average Turnaround Time: " << (float)total_tat / n << endl; 
+
+} 
+
+int main() { 
+
+int n, quantum; 
+
+cout << "Enter the number of processes: "; 
+
+Page 16 
+
+cin >> n; 
+
+cout << "Enter the time quantum: "; 
+
+cin >> quantum; 
+
+Process p[n]; 
+
+cout << "Enter the burst time for each process:\n"; 
+
+for (int i = 0; i < n; i++) { 
+
+p[i].id = i + 1; 
+
+cout << "Process " << i + 1 << ": "; 
+
+cin >> p[i].bt; 
+
+} 
+
+roundRobin(p, n, quantum); 
+
+return 0; 
+
+} 
